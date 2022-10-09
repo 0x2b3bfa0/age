@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Build binaries
-        run: touch age-foo
+        run: date> age-foo
       - name: Upload workflow artifacts
         uses: actions/upload-artifact@v2
         with:
