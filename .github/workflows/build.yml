@@ -1,16 +1,10 @@
-name: Build and upload binaries
-on:
-  release:
-    types: [published]
-  push:
-  pull_request:
+on: release
 permissions:
   contents: read
 jobs:
   build:
     name: Build binaries
     runs-on: ubuntu-latest
-    environment: "Build, sign, release binaries"
     steps:
       - name: Install Go
         uses: actions/setup-go@v2
@@ -32,17 +26,6 @@ jobs:
             mkdir "$DIR/age"
             cp "$RUNNER_TEMP/LICENSE" "$DIR/age"
             go build -o "$DIR/age" -ldflags "-X main.Version=$VERSION" -trimpath ./cmd/...
-            if [ "$GOOS" == "windows" ]; then
-              if [ -n "${{ secrets.SIGN_PASS }}" ]; then
-                for exe in "$DIR"/age/*.exe; do
-                  /usr/bin/osslsigncode sign -t "http://timestamp.comodoca.com" \
-                    -certs .github/workflows/certs/uitacllc.crt \
-                    -key .github/workflows/certs/uitacllc.key \
-                    -pass "${{ secrets.SIGN_PASS }}" \
-                    -n age -in "$exe" -out "$exe.signed"
-                  mv "$exe.signed" "$exe"
-                done
-              fi
               ( cd "$DIR"; zip age.zip -r age )
               mv "$DIR/age.zip" "age-$VERSION-$GOOS-$GOARCH.zip"
             else
