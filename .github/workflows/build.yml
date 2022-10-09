@@ -26,6 +26,7 @@ jobs:
         with:
           name: age-binaries
       - name: Upload release artifacts
-        run: gh --repo $GITHUB_REPO release upload "$GITHUB_REF_NAME" age-*
+        run: gh release upload "$GITHUB_REF_NAME" age-*
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
