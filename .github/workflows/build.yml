@@ -24,22 +24,13 @@ jobs:
           function build_age() {
             DIR="$(mktemp -d)"
             mkdir "$DIR/age"
-            cp "$RUNNER_TEMP/LICENSE" "$DIR/age"
             go build -o "$DIR/age" -ldflags "-X main.Version=$VERSION" -trimpath ./cmd/...
               ( cd "$DIR"; zip age.zip -r age )
               mv "$DIR/age.zip" "age-$VERSION-$GOOS-$GOARCH.zip"
-            else
               tar -cvzf "age-$VERSION-$GOOS-$GOARCH.tar.gz" -C "$DIR" age
-            fi
           }
           export CGO_ENABLED=0
           GOOS=linux GOARCH=amd64 build_age
-          GOOS=linux GOARCH=arm GOARM=6 build_age
-          GOOS=linux GOARCH=arm64 build_age
-          GOOS=darwin GOARCH=amd64 build_age
-          GOOS=darwin GOARCH=arm64 build_age
-          GOOS=windows GOARCH=amd64 build_age
-          GOOS=freebsd GOARCH=amd64 build_age
       - name: Upload workflow artifacts
         uses: actions/upload-artifact@v2
         with:
