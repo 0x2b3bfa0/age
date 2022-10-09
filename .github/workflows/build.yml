@@ -6,31 +6,8 @@ jobs:
     name: Build binaries
     runs-on: ubuntu-latest
     steps:
-      - name: Install Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: 1.x
-      - name: Checkout repository
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
       - name: Build binaries
-        run: |
-          sudo apt-get update && sudo apt-get install -y osslsigncode
-          cp LICENSE "$RUNNER_TEMP/LICENSE"
-          echo -e "\n---\n" >> "$RUNNER_TEMP/LICENSE"
-          curl -L "https://go.dev/LICENSE?m=text" >> "$RUNNER_TEMP/LICENSE"
-          VERSION="$(git describe --tags)"
-          function build_age() {
-            DIR="$(mktemp -d)"
-            mkdir "$DIR/age"
-            go build -o "$DIR/age" -ldflags "-X main.Version=$VERSION" -trimpath ./cmd/...
-              ( cd "$DIR"; zip age.zip -r age )
-              mv "$DIR/age.zip" "age-$VERSION-$GOOS-$GOARCH.zip"
-              tar -cvzf "age-$VERSION-$GOOS-$GOARCH.tar.gz" -C "$DIR" age
-          }
-          export CGO_ENABLED=0
-          GOOS=linux GOARCH=amd64 build_age
+        run: touch age-foo
       - name: Upload workflow artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -49,6 +26,6 @@ jobs:
         with:
           name: age-binaries
       - name: Upload release artifacts
-        run: gh release upload "$GITHUB_REF_NAME" age-*
+        run: gh --repo $GITHUB_REPO release upload "$GITHUB_REF_NAME" age-*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
