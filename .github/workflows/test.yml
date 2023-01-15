@@ -6,9 +6,8 @@ jobs:
       - uses: actions/checkout@v3
       - uses: vmactions/freebsd-vm@v0
         with:
-          prepare: pkg install -y go tmate
-          #run: ssh-keygen -t rsa -m pem -b 4096 -f ~/.ssh/id_rsa && tmate -F
-          # go test -buildvcs=false -race ./...
+          prepare: pkg install -y go
+          run: go test -buildvcs=false -race ./...
       - uses: mxschmitt/action-tmate@v3
         with:
           limit-access-to-actor: true
